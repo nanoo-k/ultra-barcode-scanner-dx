@@ -47,10 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextView mSearchResultsTextView;
 
-    // COMPLETED (12) Create a variable to store a reference to the error message TextView
     private TextView mErrorMessageDisplay;
 
-    // COMPLETED (24) Create a ProgressBar variable to store a reference to the ProgressBar
     private ProgressBar mLoadingIndicator;
 
 //    @Override
@@ -139,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
             String loginResults = null;
             try {
                 loginResults = NetworkUtils.getJWT(searchUrl, context);
-//                    githubSearchResults = NetworkUtils.useOkHTTP(searchUrl);
+
             } catch (IOException e) {
                 Log.i("doInBackground", "exception.");
 
@@ -148,7 +146,6 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return loginResults;
-//            return "true";
         }
 
         @Override
@@ -157,9 +154,6 @@ public class LoginActivity extends AppCompatActivity {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (loginResults != null && loginResults != "closed") {
                 Log.i("onPostExecute", loginResults);
-
-//                showJsonDataView();
-//                mSearchResultsTextView.setText(loginResults);
 
                 goToMainActivity();
 
@@ -188,73 +182,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * This method retrieves the search text from the EditText, constructs the
-     * URL (using {@link NetworkUtils}) for the github repository you'd like to find, displays
-     * that URL in a TextView, and finally fires off an AsyncTask to perform the GET request using
-     * our {@link LoginTask}
-     */
-    private void makeRecentVinsRequest() {
-        String jwt = PreferenceData.getJwt(this.getApplicationContext());
 
-        URL recentVinsUrl = NetworkUtils.buildRecentVinsUrl();
-
-        mUrlDisplayTextView.setText(recentVinsUrl.toString());
-        new GetRecentVinsTask(this.getApplicationContext()).execute(recentVinsUrl);
-
-    }
-
-    public class GetRecentVinsTask extends AsyncTask<URL, Void, String> {
-
-        /* We need the app context available for these callback functions, so
-        ensure that we set it when calling this task */
-        private Context context;
-        public GetRecentVinsTask (Context c){
-            context = c;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            Log.i("onPreExecute", "MADE IT.");
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(URL... params) {
-            Log.i("doInBackground", "MADE IT.");
-
-            URL recentVinsUrl = params[0];
-            String vinResults = null;
-            try {
-                vinResults = NetworkUtils.getRecentVins(recentVinsUrl, context);
-            } catch (IOException e) {
-                Log.i("doInBackground", "exception.");
-
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return vinResults;
-//            return "true";
-        }
-
-        @Override
-        protected void onPostExecute(String vinResults) {
-
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (vinResults != null && vinResults != "closed") {
-                Log.i("onPostExecute", vinResults);
-
-                showJsonDataView();
-                mSearchResultsTextView.setText(vinResults);
-
-            } else {
-                Log.i("onPostExecute", "Null.");
-//                showErrorMessage();
-            }
-        }
-    }
 
     protected void goToMainActivity () {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -276,24 +204,6 @@ public class LoginActivity extends AppCompatActivity {
         toast.show();
     }
 
-    public void getRecentVins (View view) {
-        String jwt = PreferenceData.getJwt(this.getApplicationContext());
-
-        /* If user doesn't have a JWT, we can't make the request */
-        if (jwt == "") {
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-
-            String text = "You do not have a JWT";
-
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        } else {
-            makeRecentVinsRequest();
-        }
-
-    }
 
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {

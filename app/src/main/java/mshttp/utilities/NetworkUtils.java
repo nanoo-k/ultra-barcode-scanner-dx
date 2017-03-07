@@ -134,8 +134,10 @@ public class NetworkUtils {
 
 //        JSONObject jsonObject = new JSONObject(response.body().string());
 
+        String responseString = response.body().string();
+
         /* You can only call response.body().string() once. Why. I dunno, but it's fact. */
-        JWT jwt = gson.fromJson(response.body().string(), JWT.class);
+        JWT jwt = gson.fromJson(responseString, JWT.class);
 
         Log.i("JWT.toString", jwt.toString());
 
@@ -192,6 +194,5 @@ public class NetworkUtils {
 
         return vins.toString();
 
-//        return "true";
     }
 }
