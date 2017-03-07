@@ -13,6 +13,11 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.varvet.barcodereadersample.barcode.BarcodeCaptureActivity;
 
+import mshttp.LoginActivity;
+import mshttp.utilities.PreferenceData;
+
+
+
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int BARCODE_READER_REQUEST_CODE = 1;
@@ -34,6 +39,41 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
             }
         });
+
+        Button logoutButton = (Button) findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logout();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onPostResume() {
+        /* Check if user is logged in */
+        boolean isLoggedIn = PreferenceData.getUserLoggedInStatus(this.getApplicationContext());
+        if (!isLoggedIn) {
+            navigateToLogin();
+        }
+//        else {
+//            super.onPostResume();
+//        }
+        super.onPostResume();
+    }
+
+    /* Navigate to login page */
+    protected void navigateToLogin () {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+    }
+
+    protected void logout () {
+        PreferenceData.clearLoggedInUser(getApplicationContext());
+        PreferenceData.clearJwt(getApplicationContext());
+
+        navigateToLogin();
     }
 
     @Override

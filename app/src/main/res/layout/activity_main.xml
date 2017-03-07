@@ -26,4 +26,12 @@
         android:layout_below="@id/result_textview"
         android:background="@color/colorAccent"
         android:textColor="@color/colorWhite"/>
+
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:background="@color/colorAccent"
+        android:textColor="@color/colorWhite"/>
 </RelativeLayout>
