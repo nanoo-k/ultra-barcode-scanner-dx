@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mResultTextView;
     private TextView mRecentVinsTextView;
     private TextView mErrorMessageDisplay;
+    private TextView mDecodedVinTextView;
     private ProgressBar mLoadingIndicator;
 
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
         mRecentVinsTextView = (TextView) findViewById(R.id.recent_vins_text_view);
         mResultTextView = (TextView) findViewById(R.id.result_textview);
+        mDecodedVinTextView = (TextView) findViewById(R.id.decode_vin_result_textview);
 
 
         Button scanBarcodeButton = (Button) findViewById(R.id.scan_barcode_button);
@@ -70,8 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPostResume() {
+
         /* Check if user is logged in */
         getRecentVins();
+//        decodeVinRequest("3FA6P0K93FR226629");
 //        boolean isLoggedIn = PreferenceData.getUserLoggedInStatus(this.getApplicationContext());
 //        if (!isLoggedIn) {
 //
@@ -104,13 +108,93 @@ public class MainActivity extends AppCompatActivity {
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
                     Point[] p = barcode.cornerPoints;
                     mResultTextView.setText(barcode.displayValue);
+
+                    Log.i("FIRST", "ONETT");
+
+                    /* Decode this Vin */
+                    decodeVinRequest(barcode.displayValue);
+
                 } else mResultTextView.setText(R.string.no_barcode_captured);
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));
         } else super.onActivityResult(requestCode, resultCode, data);
     }
 
+//    protected void decodeVin(String vin) {
+//        URL decodeVinUrl = NetworkUtils.buildDecodeVinUrl(vin);
+//
+////        mUrlDisplayTextView.setText(decodeVinUrl.toString());
+//        new DecodeVinTask(this.getApplicationContext()).execute(decodeVinUrl);
+//    }
 
+    /**
+     * This method retrieves the search text from the EditText, constructs the
+     * URL (using {@link NetworkUtils}) for the github repository you'd like to find, displays
+     * that URL in a TextView, and finally fires off an AsyncTask to perform the GET request using
+     * our {@link GetRecentVinsTask}
+     */
+    private void decodeVinRequest(String vin) {
+
+        String jwt = PreferenceData.getJwt(this.getApplicationContext());
+
+        URL decodeVinUrl = NetworkUtils.buildDecodeVinUrl(vin);
+
+        mDecodedVinTextView.setText(decodeVinUrl.toString());
+        new DecodeVinTask(this.getApplicationContext()).execute(decodeVinUrl);
+
+    }
+
+    public class DecodeVinTask extends AsyncTask<URL, Void, String> {
+
+        /* We need the app context available for these callback functions, so
+        ensure that we set it when calling this task */
+        private Context context;
+        public DecodeVinTask (Context c){
+            context = c;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Log.i("onPreExecute", "MADE IT.");
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(URL... params) {
+            Log.i("doInBackground", "MADE IT.");
+
+            URL recentVinsUrl = params[0];
+            String vinResults = null;
+            try {
+                vinResults = NetworkUtils.decodeVin(recentVinsUrl, context);
+            } catch (IOException e) {
+                Log.i("doInBackground", "exception.");
+
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return vinResults;
+//            return "true";
+        }
+
+        @Override
+        protected void onPostExecute(String vinResults) {
+
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            if (vinResults != null && vinResults != "closed") {
+                Log.i("onPostExecute", vinResults);
+
+                showJsonDataView();
+                mDecodedVinTextView.setText(vinResults);
+
+            } else {
+                Log.i("onPostExecute", "Null.");
+                showErrorMessage();
+            }
+        }
+    }
 
 
     public void getRecentVins () {

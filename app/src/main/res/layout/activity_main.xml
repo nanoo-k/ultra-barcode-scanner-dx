@@ -27,12 +27,24 @@
         android:gravity="center"
         android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
+    <TextView
+        android:id="@+id/decode_vin_result_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scanned VIN details appear here"
+        android:layout_below="@id/result_textview"
+        android:textSize="22sp"
+        android:freezesText="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
     <Button
         android:id="@+id/scan_barcode_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/scan_barcode_button"
-        android:layout_below="@id/result_textview"
+        android:layout_below="@id/decode_vin_result_textview"
         android:background="@color/colorPrimary"
         android:textColor="@color/colorWhite"/>
 

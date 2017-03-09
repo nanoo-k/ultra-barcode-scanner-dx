@@ -22,6 +22,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
@@ -30,8 +32,10 @@ import java.util.List;
 
 import okhttp3.Credentials;
 import okhttp3.Headers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 //import android.util.Base64Converter;
@@ -55,6 +59,10 @@ public class NetworkUtils {
 //            "https://api.github.com/search/repositories";
 
     final static String PARAM_QUERY = "q";
+
+    /* Requires utf-16 else errors */
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-16");
 
     /*
      * The sort field. One of stars, forks, or updated.
@@ -87,6 +95,21 @@ public class NetworkUtils {
 
     public static URL buildRecentVinsUrl() {
         Uri builtUri = Uri.parse(VIN).buildUpon()
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildDecodeVinUrl (String vin) {
+        String mash = VIN + "/" + vin;
+        Uri builtUri = Uri.parse(mash).buildUpon()
                 .build();
 
         URL url = null;
@@ -171,6 +194,9 @@ public class NetworkUtils {
                 .addHeader("Authorization", bearer)
                 .build();
 
+
+        Log.i("HEADERS: ", request.headers().toString());
+
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
@@ -190,9 +216,63 @@ public class NetworkUtils {
 
         Log.i("Response.toString", vins.toString());
 
-        PreferenceData.setJwt(context, vins.toString());
+//        PreferenceData.setJwt(context, vins.toString());
 
         return vins.toString();
+
+    }
+
+
+
+    /**
+     * This method returns the entire result from the HTTP response.
+     *
+     * @param url The URL to fetch the HTTP response from.
+     * @return The contents of the HTTP response.
+     * @throws IOException Related to network and stream reading
+     */
+    public static String decodeVin (URL url, Context context) throws Exception {
+
+        OkHttpClient client = new OkHttpClient();
+        Gson gson = new Gson();
+
+
+        String jwt = PreferenceData.getJwt(context);
+
+        String bearer = "Bearer " + jwt;
+
+        String json = gson.toJson("empty");
+
+        RequestBody body = RequestBody.create(JSON, json);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Authorization", bearer)
+                .build();
+
+        Log.i("REQUEST: ", request.toString());
+        Log.i("HEADERS: ", request.headers().toString());
+
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            Log.i("BAD RESPONSE: ", response.toString());
+        }
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+        Headers responseHeaders = response.headers();
+        for (int i = 0; i < responseHeaders.size(); i++) {
+            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+        }
+
+        /* gson the listType */
+        Vin vin = gson.fromJson(response.body().string(), Vin.class);
+
+        Log.i("decodeVin.Response", vin.toString());
+
+//        PreferenceData.setJwt(context, vin.toString());
+
+        return vin.toString();
 
     }
 }
