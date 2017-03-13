@@ -70,11 +70,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /* onStart, onResume */
     @Override
     protected void onPostResume() {
 
         /* Check if user is logged in */
-        getRecentVins();
+//        getRecentVins();
 //        decodeVinRequest("3FA6P0K93FR226629");
 //        boolean isLoggedIn = PreferenceData.getUserLoggedInStatus(this.getApplicationContext());
 //        if (!isLoggedIn) {

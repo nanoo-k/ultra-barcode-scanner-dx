@@ -17,9 +17,27 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        qa {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        free {
+
+        }
+        paid {
+
+        }
     }
     dexOptions {
         javaMaxHeapSize "4g"
+    }
+
+    task testtask {
+        doLast {
+            println 'Hey hey hey hey this is a test task which prints to the terminal'
+        }
     }
 }
 
