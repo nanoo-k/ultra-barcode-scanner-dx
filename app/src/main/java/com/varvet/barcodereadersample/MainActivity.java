@@ -43,10 +43,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        ((MyApplication) getApplication()).startTracking();
+
         /* Save references to onscreen elements */
-        mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
-        mRecentVinsTextView = (TextView) findViewById(R.id.recent_vins_text_view);
+//        mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
+//        mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
+//        mRecentVinsTextView = (TextView) findViewById(R.id.recent_vins_text_view);
         mResultTextView = (TextView) findViewById(R.id.result_textview);
         mDecodedVinTextView = (TextView) findViewById(R.id.decode_vin_result_textview);
 

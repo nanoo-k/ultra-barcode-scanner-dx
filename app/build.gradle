@@ -34,11 +34,6 @@ android {
         javaMaxHeapSize "4g"
     }
 
-    task testtask {
-        doLast {
-            println 'Hey hey hey hey this is a test task which prints to the terminal'
-        }
-    }
 }
 
 dependencies {
@@ -46,6 +41,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.google.android.gms:play-services-vision:10.2.0'
+    compile 'com.google.android.gms:play-services-analytics:10.2.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.google.code.gson:gson:2.8.0'
