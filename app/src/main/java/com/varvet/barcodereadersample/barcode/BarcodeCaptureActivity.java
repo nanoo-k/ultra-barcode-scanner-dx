@@ -32,9 +32,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -49,6 +52,9 @@ import com.varvet.barcodereadersample.camera.CameraSource;
 import com.varvet.barcodereadersample.camera.CameraSourcePreview;
 
 import java.io.IOException;
+
+import mshttp.LoginActivity;
+import mshttp.utilities.PreferenceData;
 
 public final class BarcodeCaptureActivity extends AppCompatActivity
         implements BarcodeTracker.BarcodeGraphicTrackerCallback {
@@ -88,7 +94,55 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         } else {
             requestCameraPermission();
         }
+
+
+        /* Set up the appbar as a toolbar (docs recommend this for best compatibility */
+//        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+//        setSupportActionBar(myToolbar);
+
+        // my_child_toolbar is defined in the layout file
+//        Toolbar myChildToolbar =
+//                (Toolbar) findViewById(R.id.my_child_toolbar);
+//        setSupportActionBar(myChildToolbar);
+//
+//        // Get a support ActionBar corresponding to this toolbar
+//        ActionBar ab = getSupportActionBar();
+//
+//        // Enable the Up button
+//        ab.setDisplayHomeAsUpEnabled(true);
+
+
     }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.action_logout:
+//                // User wants to logout, log them out.
+//                logout();
+//                return true;
+//
+//            default:
+//                // If we got here, the user's action was not recognized.
+//                // Invoke the superclass to handle it.
+//                return super.onOptionsItemSelected(item);
+//
+//        }
+//    }
+
+    protected void logout () {
+        PreferenceData.clearLoggedInUser(getApplicationContext());
+        PreferenceData.clearJwt(getApplicationContext());
+
+        navigateToLogin();
+    }
+
+    /* Navigate to login page */
+    protected void navigateToLogin () {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+    }
+
 
     @Override
     public void onDetectedQrCode(Barcode barcode) {

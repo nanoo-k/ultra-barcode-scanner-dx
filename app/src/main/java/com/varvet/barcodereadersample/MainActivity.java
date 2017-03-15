@@ -6,13 +6,18 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.varvet.barcodereadersample.barcode.BarcodeCaptureActivity;
@@ -53,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
         mDecodedVinTextView = (TextView) findViewById(R.id.decode_vin_result_textview);
 
 
+        /* Set up the appbar as a toolbar (docs recommend this for best compatibility */
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
+
         Button scanBarcodeButton = (Button) findViewById(R.id.scan_barcode_button);
         scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,14 +72,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button logoutButton = (Button) findViewById(R.id.logout_button);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout();
-            }
-        });
+    }
 
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // User wants to logout, log them out.
+                logout();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     /* onStart, onResume */
@@ -185,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String vinResults) {
 
+            /* If VIN got decoded and we got data from server... */
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (vinResults != null && vinResults != "closed") {
                 Log.i("onPostExecute", vinResults);
@@ -192,11 +218,31 @@ public class MainActivity extends AppCompatActivity {
                 showJsonDataView();
                 mDecodedVinTextView.setText(vinResults);
 
-            } else {
+                sendAnalyticsHit("BarcodeSuccess", "BarcodeSuccess", "BarcodeSuccess");
+
+
+            }
+            /* Else error decoding */
+            else {
+                sendAnalyticsHit("BarcodeFail", "BarcodeFail", "BarcodeFail");
+
                 Log.i("onPostExecute", "Null.");
                 showErrorMessage();
             }
         }
+    }
+
+    /* Implement these where we want and then set autotracking to false (res/xml/tracker_settings) */
+    private void sendAnalyticsHit (String category, String action, String label) {
+        // Get the tracker
+        Tracker tracker = ((MyApplication) getApplication()).getTracker();
+
+        // Send the hit
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(category)
+                .setAction(action)
+                .setLabel(label)
+                .build());
     }
 
 

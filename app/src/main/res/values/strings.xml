@@ -12,6 +12,9 @@
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
 
+    <!-- Strings related to App bar -->
+    <string name="action_logout">Logout</string>
+
     <string name="error_message">
         Failed to get results. Please try again.
     </string>

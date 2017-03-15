@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/topLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
+
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/my_child_toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--android:elevation="4dp"-->
+        <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
+
+        <!--<menu xmlns:android="http://schemas.android.com/apk/res/android" >-->
+
+            <!--&lt;!&ndash; "Mark Favorite", should appear as action button if possible &ndash;&gt;-->
+            <!--<item-->
+                <!--android:id="@+id/action_logout"-->
+                <!--android:icon="@drawable/ic_logout"-->
+                <!--android:title="@string/action_logout"-->
+                <!--android:showAsAction="ifRoom"/>-->
+
+        <!--</menu>-->
+    <!--</android.support.v7.widget.Toolbar>-->
 
     <com.varvet.barcodereadersample.camera.CameraSourcePreview
         android:id="@+id/preview"
