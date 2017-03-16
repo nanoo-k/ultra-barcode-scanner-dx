@@ -28,7 +28,7 @@ import java.net.URL;
 import mshttp.LoginActivity;
 import mshttp.utilities.NetworkUtils;
 import mshttp.utilities.PreferenceData;
-
+import vins.ManualEntryActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -71,6 +71,24 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
             }
         });
+
+        Button manualEntryButton = (Button) findViewById(R.id.manual_entry_button);
+        manualEntryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ManualEntryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+//        Button manageVinsButton = (Button) findViewById(R.id.manage_vins_button);
+//        manageVinsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getApplicationContext(), ManageVinsActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
     }
 

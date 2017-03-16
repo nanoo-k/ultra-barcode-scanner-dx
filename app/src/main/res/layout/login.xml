@@ -49,8 +49,6 @@
         android:textSize="22sp"
         android:visibility="gone" />
 
-    <!--COMPLETED (2) Wrap the ScrollView in a FrameLayout-->
-    <!--COMPLETED (3) Make the width and height of the FrameLayout match_parent-->
     <Button
         android:text="Login"
         android:layout_width="match_parent"

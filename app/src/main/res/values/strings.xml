@@ -3,6 +3,8 @@
 
     <!-- Strings related to MainActivity-->
     <string name="scan_barcode_button">Scan barcode</string>
+    <string name="manual_entry_button">Manual Entry</string>
+    <string name="manage_vins_button">Manage Vins</string>
     <string name="no_barcode_captured">No barcode captured</string>
     <string name="barcode_error_format">"Error reading barcode: %1$s"</string>
 

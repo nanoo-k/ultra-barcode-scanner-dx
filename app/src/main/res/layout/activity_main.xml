@@ -27,7 +27,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="@dimen/activity_vertical_margin"/>
 
     <TextView
         android:id="@+id/decode_vin_result_textview"
@@ -48,7 +48,28 @@
         android:text="@string/scan_barcode_button"
         android:layout_below="@id/decode_vin_result_textview"
         android:background="@color/colorPrimary"
-        android:textColor="@color/colorWhite"/>
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+    <Button
+        android:id="@+id/manual_entry_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/manual_entry_button"
+        android:layout_below="@id/scan_barcode_button"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+    <Button
+        android:id="@+id/manage_vins_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/manage_vins_button"
+        android:layout_below="@id/manual_entry_button"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
     <!--<FrameLayout-->
         <!--android:layout_width="match_parent"-->
