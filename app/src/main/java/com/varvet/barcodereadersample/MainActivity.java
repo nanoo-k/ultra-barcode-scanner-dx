@@ -167,12 +167,12 @@ public class MainActivity extends AppCompatActivity {
         } else super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    protected void decodeVin(String vin) {
-//        URL decodeVinUrl = NetworkUtils.buildDecodeVinUrl(vin);
-//
-////        mUrlDisplayTextView.setText(decodeVinUrl.toString());
-//        new DecodeVinTask(this.getApplicationContext()).execute(decodeVinUrl);
-//    }
+    protected void decodeVin(String vin) {
+        URL decodeVinUrl = NetworkUtils.buildDecodeVinUrl(vin);
+
+//        mUrlDisplayTextView.setText(decodeVinUrl.toString());
+        new DecodeVinTask(this.getApplicationContext()).execute(decodeVinUrl);
+    }
 
     /**
      * This method retrieves the search text from the EditText, constructs the
