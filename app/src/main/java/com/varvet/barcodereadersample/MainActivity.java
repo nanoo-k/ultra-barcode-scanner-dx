@@ -51,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         ((MyApplication) getApplication()).startTracking();
 
         /* Save references to onscreen elements */
-//        mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
-//        mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
-//        mRecentVinsTextView = (TextView) findViewById(R.id.recent_vins_text_view);
+        mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
+        mRecentVinsTextView = (TextView) findViewById(R.id.recent_vins_text_view);
         mResultTextView = (TextView) findViewById(R.id.result_textview);
         mDecodedVinTextView = (TextView) findViewById(R.id.decode_vin_result_textview);
 
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPostResume() {
 
         /* Check if user is logged in */
-//        getRecentVins();
+        getRecentVins();
 //        decodeVinRequest("3FA6P0K93FR226629");
 //        boolean isLoggedIn = PreferenceData.getUserLoggedInStatus(this.getApplicationContext());
 //        if (!isLoggedIn) {
