@@ -24,6 +24,8 @@ import mshttp.utilities.NetworkUtils;
 import mshttp.utilities.PreferenceData;
 import mshttp.utilities.Vin;
 
+import static android.R.attr.category;
+
 /**
  * Created by mvalencia on 3/20/17.
  */
@@ -161,12 +163,13 @@ public class VinsAdapter extends RecyclerView.Adapter<VinsAdapter.VinsViewHolder
             protected void onPostExecute(String isSuccess) {
 
                 if (isSuccess == "true") {
-                    sendAnalyticsHit("DeleteVinSuccess", "DeleteVinSuccess", "DeleteVinSuccess");
+                    sendAnalyticsHit(context, "DeleteVinSuccess", "DeleteVinSuccess", "DeleteVinSuccess");
 
                     Log.i("SUCCESS: ", "SUCCESS");
                 }
-
-                Log.i("FAILURE: ", "FAILURE");
+                else {
+                    Log.i("FAILURE: ", "FAILURE");
+                }
 
             /* If VIN got decoded and we got data from server... */
 //                mLoadingIndicator.setVisibility(View.INVISIBLE);
@@ -191,19 +194,19 @@ public class VinsAdapter extends RecyclerView.Adapter<VinsAdapter.VinsViewHolder
         }
 
         /* Implement these where we want and then set autotracking to false (res/xml/tracker_settings) */
-        private void sendAnalyticsHit (String category, String action, String label) {
-
-//            TODO Implement tracker
+        private void sendAnalyticsHit (Context context, String category, String action, String label) {
 
             // Get the tracker
-//            Tracker tracker = ((MyApplication) getApplication()).getTracker();
-//
-//            // Send the hit
-//            tracker.send(new HitBuilders.EventBuilder()
-//                    .setCategory(category)
-//                    .setAction(action)
-//                    .setLabel(label)
-//                    .build());
+            Tracker tracker = ((MyApplication) context.getApplicationContext()).getTracker();
+
+            // Send the hit
+            tracker.send(new HitBuilders.EventBuilder()
+                    .setCategory(category)
+                    .setAction(action)
+                    .setLabel(label)
+                    .build());
+
+            Log.i("tracking: ", "did it.");
         }
 
         void bind(int position) {
