@@ -26,6 +26,14 @@ public class Vin {
         return details;
     }
 
+
+    public Vin(String id, String date, String vin, CarDetails details) {
+        this.id = id;
+        this.date = date;
+        this.vin = vin;
+        this.details = details;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -41,6 +49,7 @@ public class Vin {
     public void setDetails(CarDetails details) {
         this.details = details;
     }
+
 
     @Override
     public String toString() {

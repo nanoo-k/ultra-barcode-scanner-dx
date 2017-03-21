@@ -188,6 +188,8 @@ public class NetworkUtils {
             System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
         }
 
+        String vinsAsString = response.body().string();
+
 //        JSONObject jsonObject = new JSONObject(response.body().string());
 
         /* This is a pattern for gson parsing an array of some kind of object */
@@ -195,13 +197,13 @@ public class NetworkUtils {
         Type listType = new TypeToken<List<Vin>>(){}.getType();
         /* Then you say you're going to parse to create a list of that thing, assigning to
          * gson the listType */
-        List<Vin> vins = gson.fromJson(response.body().string(), listType);
+        List<Vin> vins = gson.fromJson(vinsAsString, listType);
 
         Log.i("Response.toString", vins.toString());
 
 //        PreferenceData.setJwt(context, vins.toString());
 
-        return vins.toString();
+        return vinsAsString;
 
     }
 

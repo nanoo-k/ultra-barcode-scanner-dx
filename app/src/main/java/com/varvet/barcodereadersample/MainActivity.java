@@ -6,12 +6,18 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,27 +26,39 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.varvet.barcodereadersample.barcode.BarcodeCaptureActivity;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import mshttp.LoginActivity;
 import mshttp.utilities.NetworkUtils;
 import mshttp.utilities.PreferenceData;
+import mshttp.utilities.Vin;
 import vins.ManualEntryActivity;
+import vins.VinsAdapter;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int BARCODE_READER_REQUEST_CODE = 1;
 
+    private static final int NUM_LIST_ITEMS = 50;
+    private VinsAdapter mAdapter;
+    private RecyclerView mVinsList;
+
     private TextView mResultTextView;
-    private TextView mRecentVinsTextView;
     private TextView mErrorMessageDisplay;
     private TextView mDecodedVinTextView;
+    private ListView mRecentVinsListView;
     private ProgressBar mLoadingIndicator;
 
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
         /* Save references to onscreen elements */
         mErrorMessageDisplay = (TextView) findViewById(R.id.error_message_display);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.loading_indicator);
-        mRecentVinsTextView = (TextView) findViewById(R.id.recent_vins_text_view);
         mResultTextView = (TextView) findViewById(R.id.result_textview);
         mDecodedVinTextView = (TextView) findViewById(R.id.decode_vin_result_textview);
+//        mRecentVinsListView = (ListView) findViewById(R.id.recent_vins_list_view);
 
 
         /* Set up the appbar as a toolbar (docs recommend this for best compatibility */
@@ -89,6 +107,17 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(intent);
 //            }
 //        });
+
+//        mVinsList = (RecyclerView) findViewById(R.id.recyclerview_vins);
+//
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        mVinsList.setLayoutManager(layoutManager);
+//
+//        mVinsList.setHasFixedSize(true);
+
+//        mAdapter = new VinsAdapter(NUM_LIST_ITEMS);
+//
+//        mVinsList.setAdapter(mAdapter);
 
     }
 
@@ -298,7 +327,6 @@ public class MainActivity extends AppCompatActivity {
 
         URL recentVinsUrl = NetworkUtils.buildRecentVinsUrl();
 
-        mRecentVinsTextView.setText(recentVinsUrl.toString());
         new GetRecentVinsTask(this.getApplicationContext()).execute(recentVinsUrl);
 
     }
@@ -342,11 +370,39 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String vinResults) {
 
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (vinResults != null && vinResults != "closed") {
+            if (vinResults != null) {
                 Log.i("onPostExecute", vinResults);
 
-                showJsonDataView();
-                mRecentVinsTextView.setText(vinResults);
+//                showJsonDataView();
+//                mRecentVinsTextView.setText(vinResults);
+
+
+                Gson gson = new Gson();
+
+                /* This is a pattern for gson parsing an array of some kind of object */
+                /* First you determine the listType of the object */
+                Type listType = new TypeToken<List<Vin>>(){}.getType();
+                /* Then you say you're going to parse to create a list of that thing, assigning to
+                 * gson the listType */
+                List<Vin> vinList = gson.fromJson(vinResults, listType);
+
+//                Vin[] vinList = gson.fromJson(vinResults, Vin[].class);
+
+
+//                VinListAdapter adapter = new VinListAdapter(context, R.layout.vin_management_list, vinList);
+
+//                mRecentVinsListView.setAdapter(adapter);
+
+                mVinsList = (RecyclerView) findViewById(R.id.recyclerview_vins);
+
+                LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+                mVinsList.setLayoutManager(layoutManager);
+
+                mVinsList.setHasFixedSize(true);
+
+                mAdapter = new VinsAdapter(vinList);
+
+                mVinsList.setAdapter(mAdapter);
 
             } else {
                 Log.i("onPostExecute", "Null.");
@@ -366,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
         // First, make sure the error is invisible
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         // Then, make sure the JSON data is visible
-        mRecentVinsTextView.setVisibility(View.VISIBLE);
+//        mRecentVinsListView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -378,8 +434,22 @@ public class MainActivity extends AppCompatActivity {
      */
     private void showErrorMessage() {
         // First, hide the currently visible data
-        mRecentVinsTextView.setVisibility(View.INVISIBLE);
+//        mRecentVinsListView.setVisibility(View.INVISIBLE);
         // Then, show the error
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
+
+
+//    @Override
+//    public void onListItemClick(int clickedItemIndex) {
+//        if (mToast != null) {
+//            mToast.cancel();
+//        }
+//
+//        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
+//        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+//
+//        mToast.show();
+//    }
+
 }

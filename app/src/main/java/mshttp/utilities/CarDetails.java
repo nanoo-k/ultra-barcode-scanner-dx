@@ -33,6 +33,12 @@ public class CarDetails {
         this.model = model;
     }
 
+    public CarDetails(String year, String make, String model) {
+        this.year = year;
+        this.make = make;
+        this.model = model;
+    }
+
     @Override
     public String toString() {
         return "CarDetails{" +
