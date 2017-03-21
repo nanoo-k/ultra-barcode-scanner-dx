@@ -52,7 +52,7 @@ class VinListAdapter extends ArrayAdapter<Vin> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 //        return super.getView(position, convertView, parent);
-        String id = getItem(position).getId();
+        int id = getItem(position).getId();
         String date = getItem(position).getDate();
         String vin = getItem(position).getVin();
         CarDetails details = getItem(position).getDetails();
@@ -62,7 +62,7 @@ class VinListAdapter extends ArrayAdapter<Vin> {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
 
-        TextView idTextView = (TextView) convertView.findViewById(R.id.id_text_view);
+//        TextView idTextView = (TextView) convertView.findViewById(R.id.id_text_view);
 //        TextView dateTextView = (TextView) convertView.findViewById(R.id.date_text_view);
 //        TextView vinTextView = (TextView) convertView.findViewById(R.id.vin_text_view);
 //        TextView carDetailsYearTextView = (TextView) convertView.findViewById(R.id.car_details_year_text_view);
@@ -70,7 +70,7 @@ class VinListAdapter extends ArrayAdapter<Vin> {
 //        TextView carDetailsModelTextView = (TextView) convertView.findViewById(R.id.car_details_model_text_view);
 
 
-        idTextView.setText(id);
+//        idTextView.setText("" + id);
 //        dateTextView.setText(date);
 //        vinTextView.setText(vin);
 //        carDetailsYearTextView.setText(details.year);

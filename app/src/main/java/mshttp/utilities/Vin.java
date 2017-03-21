@@ -5,12 +5,12 @@ package mshttp.utilities;
  */
 
 public class Vin {
-    public String id;
+    public int id;
     public String date;
     public String vin;
     public CarDetails details;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -27,14 +27,14 @@ public class Vin {
     }
 
 
-    public Vin(String id, String date, String vin, CarDetails details) {
+    public Vin(int id, String date, String vin, CarDetails details) {
         this.id = id;
         this.date = date;
         this.vin = vin;
         this.details = details;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

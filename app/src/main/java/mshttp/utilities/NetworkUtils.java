@@ -105,6 +105,22 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildDeleteVinUrl (String vin) {
+//        String mash = VIN + "/" + vin;
+        String mash = VIN + "/" + "3FA6P0K93FR226623";
+        Uri builtUri = Uri.parse(mash).buildUpon()
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
 
     /**
      * This method returns the entire result from the HTTP response.
@@ -236,8 +252,8 @@ public class NetworkUtils {
                 .addHeader("Authorization", bearer)
                 .build();
 
-        Log.i("REQUEST: ", request.toString());
-        Log.i("HEADERS: ", request.headers().toString());
+//        Log.i("REQUEST: ", request.toString());
+//        Log.i("HEADERS: ", request.headers().toString());
 
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
@@ -259,5 +275,43 @@ public class NetworkUtils {
 
         return vin.toString();
 
+    }
+
+    public static String deleteVin(URL url, Context context) throws Exception {
+
+        OkHttpClient client = new OkHttpClient();
+        Gson gson = new Gson();
+
+        String jwt = PreferenceData.getJwt(context);
+
+        String bearer = "Bearer " + jwt;
+
+        String json = gson.toJson("empty");
+
+        RequestBody body = RequestBody.create(JSON, json);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .delete(body)
+                .addHeader("Authorization", bearer)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            Log.i("BAD RESPONSE: ", response.toString());
+        }
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+        Headers responseHeaders = response.headers();
+        for (int i = 0; i < responseHeaders.size(); i++) {
+            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+        }
+
+        /* gson the listType */
+//        Vin vin = gson.fromJson(response.body().string(), Vin.class);
+
+//        Log.i("decodeVin.Response", vin.toString());
+
+        return "true";
     }
 }
