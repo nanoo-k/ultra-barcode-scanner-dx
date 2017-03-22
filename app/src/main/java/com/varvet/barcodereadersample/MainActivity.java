@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -185,15 +186,19 @@ public class MainActivity extends AppCompatActivity {
                     Point[] p = barcode.cornerPoints;
                     mResultTextView.setText(barcode.displayValue);
 
-                    Log.i("FIRST", "ONETT");
-
-                    /* Decode this Vin */
-                    decodeVinRequest(barcode.displayValue);
+                    /* Vibrate phone and decode this Vin */
+                    vibrate(500);
+//                    decodeVinRequest(barcode.displayValue);
 
                 } else mResultTextView.setText(R.string.no_barcode_captured);
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));
         } else super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void vibrate (int miliseconds) {
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(miliseconds);
     }
 
 //    protected void decodeVin(String vin) {
