@@ -22,4 +22,15 @@
         android:layout_height="0dp"
         android:layout_weight="1">
     </com.varvet.barcodereadersample.camera.CameraSourcePreview>
+
+    <Button
+        android:id="@+id/toggle_flash_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Turn Flash On"
+        android:layout_below="@id/scan_barcode_button"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
 </LinearLayout>

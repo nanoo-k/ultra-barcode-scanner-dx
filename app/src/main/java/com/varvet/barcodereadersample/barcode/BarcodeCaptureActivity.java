@@ -39,6 +39,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -56,6 +58,7 @@ import java.io.IOException;
 
 import mshttp.LoginActivity;
 import mshttp.utilities.PreferenceData;
+import vins.ManualEntryActivity;
 
 public final class BarcodeCaptureActivity extends AppCompatActivity
         implements BarcodeTracker.BarcodeGraphicTrackerCallback {
@@ -74,6 +77,12 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
 
+    private Button flashButton;
+
+
+    private boolean useFlash;
+    private boolean autoFocus;
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -84,8 +93,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
 
-        boolean autoFocus = true;
-        boolean useFlash = false;
+        /* Default to autofocus true and flash false */
+        autoFocus = true;
+        useFlash = false;
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -113,8 +123,28 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         ab.setDisplayHomeAsUpEnabled(true);
 
 
+        flashButton = (Button) findViewById(R.id.toggle_flash_button);
+        flashButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleFlash();
+            }
+        });
+
     }
 
+    /* Let user toggle the flash on an off */
+    private void toggleFlash() {
+        if (useFlash) {
+            useFlash = false;
+            flashButton.setText("Turn Flash On");
+            createCameraSource(autoFocus, useFlash);
+        } else {
+            useFlash = true;
+            flashButton.setText("Turn Flash Off");
+            createCameraSource(autoFocus, useFlash);
+        }
+    }
 
     // Menu icons are inflated just as they were with actionbar
     @Override
