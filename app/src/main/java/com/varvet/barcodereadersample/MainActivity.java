@@ -100,25 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        Button manageVinsButton = (Button) findViewById(R.id.manage_vins_button);
-//        manageVinsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(getApplicationContext(), ManageVinsActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
-//        mVinsList = (RecyclerView) findViewById(R.id.recyclerview_vins);
-//
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        mVinsList.setLayoutManager(layoutManager);
-//
-//        mVinsList.setHasFixedSize(true);
-
-//        mAdapter = new VinsAdapter(NUM_LIST_ITEMS);
-//
-//        mVinsList.setAdapter(mAdapter);
+        vibrate(500);
 
     }
 
@@ -188,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
                     /* Vibrate phone and decode this Vin */
                     vibrate(500);
-//                    decodeVinRequest(barcode.displayValue);
+                    decodeVinRequest(barcode.displayValue);
 
                 } else mResultTextView.setText(R.string.no_barcode_captured);
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
@@ -198,7 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void vibrate (int miliseconds) {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(miliseconds);
+        /* Vibrate only if vibrator is available */
+        if (vibrator.hasVibrator()) vibrator.vibrate(miliseconds);
     }
 
 //    protected void decodeVin(String vin) {
