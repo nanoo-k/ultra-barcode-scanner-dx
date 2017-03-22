@@ -1,2 +1,2 @@
-# BarcodeReaderSample
-A barcode scanner example using Google Play services. 
+# ultra-barcode-scanner-dx
+Sample barcode scanning app
