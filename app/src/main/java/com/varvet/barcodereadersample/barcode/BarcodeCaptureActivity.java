@@ -86,8 +86,13 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
 
     private boolean useFlash;
-    private boolean isTorchOn;
+//    private boolean isTorchOn;
     private boolean autoFocus;
+
+//    private CameraManager mCameraManager;
+//    private String mCameraId;
+    private Button mTorchOnOffButton;
+    private Boolean isTorchOn;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -133,16 +138,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
 
 
-        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try {
-            mCameraId = mCameraManager.getCameraIdList()[0];
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
 
-
-
-
+        /* See if flash is available */
         Boolean isFlashAvailable = getApplicationContext().getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
@@ -163,18 +160,28 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
             return;
         }
 
-        flashButton = (Button) findViewById(R.id.toggle_flash_button);
-        flashButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
+
+        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        try {
+            mCameraId = mCameraManager.getCameraIdList()[0];
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+
+        mTorchOnOffButton = (Button) findViewById(R.id.toggle_flash_button);
+
+        mTorchOnOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 try {
                     if (isTorchOn) {
                         turnOffFlashLight();
                         isTorchOn = false;
+                        useFlash = false;
                     } else {
                         turnOnFlashLight();
                         isTorchOn = true;
+                        useFlash = true;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -188,81 +195,52 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
     CameraManager mCameraManager;
     private String mCameraId;
 
-    /* Let user toggle the flash on an off */
-    @TargetApi(Build.VERSION_CODES.M)
-    @RequiresApi(api = Build.VERSION_CODES.M)
-//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void toggleFlash() throws CameraAccessException {
-
-//        mCameraSource.getCameraIdList()
-//        setTorchMode()
-
-
-
-
-//        if (isTorchOn) {
-//            isTorchOn = false;
-//            flashButton.setText("Turn Flash On");
-////            createCameraSource(autoFocus, useFlash);
-//
-//            mCamManager.setTorchMode(mCameraIds[0], false);
-//            mCamManager.setTorchMode(mCameraIds[1], false);
-//
-////            mCameraSource.setFlashMode();
-//        } else {
-//            isTorchOn = true;
-//            flashButton.setText("Turn Flash Off");
-////            createCameraSource(autoFocus, useFlash);
-//
-//            mCamManager.setTorchMode(mCameraIds[0], true);
-//            mCamManager.setTorchMode(mCameraIds[1], true);
-//        }
-    }
 
     public void turnOnFlashLight() {
 
+        Log.i("turnOnFlashLight: ", "Ahoy");
+
+
+        if (mPreview != null) {
+            mPreview.release();
+        }
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mCameraManager.setTorchMode(mCameraId, true);
-                playOnOffSound();
-//                mTorchOnOffButton.setImageResource(R.drawable.on);
+//                mCameraManager.setTorchMode(mCameraId, true);
+                createCameraSource(autoFocus, true);
+                mTorchOnOffButton.setText("Turn Flash Off");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
+        startCameraSource();
+    }
 
     public void turnOffFlashLight() {
 
+        Log.i("turnOffFlashLight: ", "Ahoy");
+
+
+        if (mPreview != null) {
+            mPreview.release();
+        }
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mCameraManager.setTorchMode(mCameraId, false);
-                playOnOffSound();
-//                mTorchOnOffButton.setImageResource(R.drawable.off);
-
+//                mCameraManager.setTorchMode(mCameraId, false);
+                createCameraSource(autoFocus, false);
+                mTorchOnOffButton.setText("Turn Flash On");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        startCameraSource();
     }
 
-    private MediaPlayer mp;
 
-    private void playOnOffSound(){
-
-//        mp = MediaPlayer.create(BarcodeCaptureActivity.this, R.raw.flash_sound);
-//        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                // TODO Auto-generated method stub
-//                mp.release();
-//            }
-//        });
-//        mp.start();
-    }
 
     // Menu icons are inflated just as they were with actionbar
     @Override
@@ -447,8 +425,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
             // we have permission, so create the camerasource
-            boolean autoFocus = true;
-            boolean useFlash = false;
+//            boolean autoFocus = true;
+//            boolean useFlash = false;
             createCameraSource(autoFocus, useFlash);
             return;
         }
