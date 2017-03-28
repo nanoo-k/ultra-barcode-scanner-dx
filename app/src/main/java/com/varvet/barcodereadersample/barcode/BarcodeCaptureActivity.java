@@ -20,6 +20,7 @@ package com.varvet.barcodereadersample.barcode;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -28,9 +29,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -81,11 +86,14 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
 
     private boolean useFlash;
+    private boolean isTorchOn;
     private boolean autoFocus;
 
     /**
      * Initializes the UI and creates the detector pipeline.
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -96,6 +104,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         /* Default to autofocus true and flash false */
         autoFocus = true;
         useFlash = false;
+        isTorchOn = false;
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -123,27 +132,136 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
         ab.setDisplayHomeAsUpEnabled(true);
 
 
+
+        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        try {
+            mCameraId = mCameraManager.getCameraIdList()[0];
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        Boolean isFlashAvailable = getApplicationContext().getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+
+        if (!isFlashAvailable) {
+
+            AlertDialog alert = new AlertDialog.Builder(BarcodeCaptureActivity.this)
+                    .create();
+            alert.setTitle("Error !!");
+            alert.setMessage("Your device doesn't support flash light!");
+            alert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // closing the application
+                    finish();
+                    System.exit(0);
+                }
+            });
+            alert.show();
+            return;
+        }
+
         flashButton = (Button) findViewById(R.id.toggle_flash_button);
         flashButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-                toggleFlash();
+                try {
+                    if (isTorchOn) {
+                        turnOffFlashLight();
+                        isTorchOn = false;
+                    } else {
+                        turnOnFlashLight();
+                        isTorchOn = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
     }
 
+
+    CameraManager mCameraManager;
+    private String mCameraId;
+
     /* Let user toggle the flash on an off */
-    private void toggleFlash() {
-        if (useFlash) {
-            useFlash = false;
-            flashButton.setText("Turn Flash On");
-            createCameraSource(autoFocus, useFlash);
-        } else {
-            useFlash = true;
-            flashButton.setText("Turn Flash Off");
-            createCameraSource(autoFocus, useFlash);
+    @TargetApi(Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.M)
+//    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void toggleFlash() throws CameraAccessException {
+
+//        mCameraSource.getCameraIdList()
+//        setTorchMode()
+
+
+
+
+//        if (isTorchOn) {
+//            isTorchOn = false;
+//            flashButton.setText("Turn Flash On");
+////            createCameraSource(autoFocus, useFlash);
+//
+//            mCamManager.setTorchMode(mCameraIds[0], false);
+//            mCamManager.setTorchMode(mCameraIds[1], false);
+//
+////            mCameraSource.setFlashMode();
+//        } else {
+//            isTorchOn = true;
+//            flashButton.setText("Turn Flash Off");
+////            createCameraSource(autoFocus, useFlash);
+//
+//            mCamManager.setTorchMode(mCameraIds[0], true);
+//            mCamManager.setTorchMode(mCameraIds[1], true);
+//        }
+    }
+
+    public void turnOnFlashLight() {
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mCameraManager.setTorchMode(mCameraId, true);
+                playOnOffSound();
+//                mTorchOnOffButton.setImageResource(R.drawable.on);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+
+    public void turnOffFlashLight() {
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mCameraManager.setTorchMode(mCameraId, false);
+                playOnOffSound();
+//                mTorchOnOffButton.setImageResource(R.drawable.off);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private MediaPlayer mp;
+
+    private void playOnOffSound(){
+
+//        mp = MediaPlayer.create(BarcodeCaptureActivity.this, R.raw.flash_sound);
+//        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//
+//            @Override
+//            public void onCompletion(MediaPlayer mp) {
+//                // TODO Auto-generated method stub
+//                mp.release();
+//            }
+//        });
+//        mp.start();
     }
 
     // Menu icons are inflated just as they were with actionbar
