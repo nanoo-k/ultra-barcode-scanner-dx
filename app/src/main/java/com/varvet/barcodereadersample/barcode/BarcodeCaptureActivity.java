@@ -84,7 +84,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
 
     private boolean useFlash;
-//    private boolean isTorchOn;
     private boolean autoFocus;
 
 //    private CameraManager mCameraManager;

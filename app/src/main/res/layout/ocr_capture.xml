@@ -21,7 +21,9 @@
     <com.motoshop.ocrreader.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="80"
+        android:layout_marginBottom="@dimen/activity_vertical_margin">
 
         <com.motoshop.ocrreader.camera.GraphicOverlay
             android:id="@+id/graphicOverlay"
@@ -29,5 +31,16 @@
             android:layout_height="match_parent" />
 
     </com.motoshop.ocrreader.camera.CameraSourcePreview>
+
+
+    <Button
+        android:id="@+id/toggle_flash_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="20"
+        android:text="Turn Flash On"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
 </LinearLayout>

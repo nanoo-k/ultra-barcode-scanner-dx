@@ -26,9 +26,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
@@ -41,6 +45,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -51,6 +56,7 @@ import com.motoshop.ocrreader.camera.GraphicOverlay;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.varvet.barcodereadersample.R;
+import com.varvet.barcodereadersample.barcode.BarcodeCaptureActivity;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -88,9 +94,20 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     // A TextToSpeech engine for speaking a String value.
     private TextToSpeech tts;
 
+
+    private boolean useFlash;
+    private boolean autoFocus;
+
+    private CameraManager mCameraManager;
+    private String mCameraId;
+    private Button mTorchOnOffButton;
+    private Boolean isTorchOn;
+
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -100,8 +117,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         mGraphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById(R.id.graphicOverlay);
 
         // Set good defaults for capturing text.
-        boolean autoFocus = true;
-        boolean useFlash = false;
+        autoFocus = true;
+        useFlash = false;
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -112,27 +129,27 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             requestCameraPermission();
         }
 
-        gestureDetector = new GestureDetector(this, new CaptureGestureListener());
-        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+//        gestureDetector = new GestureDetector(this, new CaptureGestureListener());
+//        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
-                Snackbar.LENGTH_LONG)
-                .show();
+//        Snackbar.make(mGraphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+//                Snackbar.LENGTH_LONG)
+//                .show();
 
-        // TODO: Set up the Text To Speech engine.
-        TextToSpeech.OnInitListener listener =
-                new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(final int status) {
-                        if (status == TextToSpeech.SUCCESS) {
-                            Log.d("TTS", "Text to speech engine started successfully.");
-                            tts.setLanguage(Locale.US);
-                        } else {
-                            Log.d("TTS", "Error starting the text to speech engine.");
-                        }
-                    }
-                };
-        tts = new TextToSpeech(this.getApplicationContext(), listener);
+        // Set up the Text To Speech engine.
+//        TextToSpeech.OnInitListener listener =
+//                new TextToSpeech.OnInitListener() {
+//                    @Override
+//                    public void onInit(final int status) {
+//                        if (status == TextToSpeech.SUCCESS) {
+//                            Log.d("TTS", "Text to speech engine started successfully.");
+//                            tts.setLanguage(Locale.US);
+//                        } else {
+//                            Log.d("TTS", "Error starting the text to speech engine.");
+//                        }
+//                    }
+//                };
+//        tts = new TextToSpeech(this.getApplicationContext(), listener);
 
 
 
@@ -147,6 +164,102 @@ public final class OcrCaptureActivity extends AppCompatActivity {
 
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
+
+
+
+        /* See if flash is available */
+        Boolean isFlashAvailable = getApplicationContext().getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+
+        if (!isFlashAvailable) {
+
+            AlertDialog alert = new AlertDialog.Builder(OcrCaptureActivity.this)
+                    .create();
+            alert.setTitle("Error !!");
+            alert.setMessage("Your device doesn't support flash light!");
+            alert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // closing the application
+                    finish();
+                    System.exit(0);
+                }
+            });
+            alert.show();
+            return;
+        }
+
+
+        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        try {
+            mCameraId = mCameraManager.getCameraIdList()[0];
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+
+        isTorchOn = false;
+        mTorchOnOffButton = (Button) findViewById(R.id.toggle_flash_button);
+        mTorchOnOffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (isTorchOn) {
+                        turnOffFlashLight();
+                        isTorchOn = false;
+                        useFlash = false;
+                    } else {
+                        turnOnFlashLight();
+                        isTorchOn = true;
+                        useFlash = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void turnOnFlashLight() {
+
+        Log.i("turnOnFlashLight: ", "Ahoy");
+
+
+        if (mPreview != null) {
+            mPreview.release();
+        }
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                mCameraManager.setTorchMode(mCameraId, true);
+                createCameraSource(autoFocus, true);
+                mTorchOnOffButton.setText("Turn Flash Off");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        startCameraSource();
+    }
+
+    public void turnOffFlashLight() {
+
+        Log.i("turnOffFlashLight: ", "Ahoy");
+
+
+        if (mPreview != null) {
+            mPreview.release();
+        }
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                mCameraManager.setTorchMode(mCameraId, false);
+                createCameraSource(autoFocus, false);
+                mTorchOnOffButton.setText("Turn Flash On");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        startCameraSource();
     }
 
 
@@ -219,14 +332,14 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                 .show();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        boolean b = scaleGestureDetector.onTouchEvent(e);
-
-        boolean c = gestureDetector.onTouchEvent(e);
-
-        return b || c || super.onTouchEvent(e);
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent e) {
+//        boolean b = scaleGestureDetector.onTouchEvent(e);
+//
+//        boolean c = gestureDetector.onTouchEvent(e);
+//
+//        return b || c || super.onTouchEvent(e);
+//    }
 
     /**
      * Creates and starts the camera.  Note that this uses a higher resolution in comparison
@@ -382,95 +495,89 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * onTap is called to speak the tapped TextBlock, if any, out loud.
-     *
-     * @param rawX - the raw position of the tap
-     * @param rawY - the raw position of the tap.
-     * @return true if the tap was on a TextBlock
-     */
-    private boolean onTap(float rawX, float rawY) {
-        // TODO: Speak the text when the user taps on screen.
-        OcrGraphic graphic = mGraphicOverlay.getGraphicAtLocation(rawX, rawY);
-        TextBlock text = null;
-        if (graphic != null) {
-            text = graphic.getTextBlock();
-            if (text != null && text.getValue() != null) {
-                Log.d(TAG, "text data is being spoken! " + text.getValue());
-                // Speak the string.
-                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
-            }
-            else {
-                Log.d(TAG, "text data is null");
-            }
-        }
-        else {
-            Log.d(TAG,"no text detected");
-        }
-        return text != null;
-    }
+//    private boolean onTap(float rawX, float rawY) {
+//        // TODO: Speak the text when the user taps on screen.
+//        OcrGraphic graphic = mGraphicOverlay.getGraphicAtLocation(rawX, rawY);
+//        TextBlock text = null;
+//        if (graphic != null) {
+//            text = graphic.getTextBlock();
+//            if (text != null && text.getValue() != null) {
+//                Log.d(TAG, "text data is being spoken! " + text.getValue());
+//                // Speak the string.
+////                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+//            }
+//            else {
+//                Log.d(TAG, "text data is null");
+//            }
+//        }
+//        else {
+//            Log.d(TAG,"no text detected");
+//        }
+//        return text != null;
+//    }
 
-    private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
+//    private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
+//
+//        @Override
+//        public boolean onSingleTapConfirmed(MotionEvent e) {
+////            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
+//            return true;
+//        }
+//    }
 
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
-        }
-    }
-
-    private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
-
-        /**
-         * Responds to scaling events for a gesture in progress.
-         * Reported by pointer motion.
-         *
-         * @param detector The detector reporting the event - use this to
-         *                 retrieve extended info about event state.
-         * @return Whether or not the detector should consider this event
-         * as handled. If an event was not handled, the detector
-         * will continue to accumulate movement until an event is
-         * handled. This can be useful if an application, for example,
-         * only wants to update scaling factors if the change is
-         * greater than 0.01.
-         */
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            return false;
-        }
-
-        /**
-         * Responds to the beginning of a scaling gesture. Reported by
-         * new pointers going down.
-         *
-         * @param detector The detector reporting the event - use this to
-         *                 retrieve extended info about event state.
-         * @return Whether or not the detector should continue recognizing
-         * this gesture. For example, if a gesture is beginning
-         * with a focal point outside of a region where it makes
-         * sense, onScaleBegin() may return false to ignore the
-         * rest of the gesture.
-         */
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            return true;
-        }
-
-        /**
-         * Responds to the end of a scale gesture. Reported by existing
-         * pointers going up.
-         * <p/>
-         * Once a scale has ended, {@link ScaleGestureDetector#getFocusX()}
-         * and {@link ScaleGestureDetector#getFocusY()} will return focal point
-         * of the pointers remaining on the screen.
-         *
-         * @param detector The detector reporting the event - use this to
-         *                 retrieve extended info about event state.
-         */
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            if (mCameraSource != null) {
-                mCameraSource.doZoom(detector.getScaleFactor());
-            }
-        }
-    }
+//    private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
+//
+//        /**
+//         * Responds to scaling events for a gesture in progress.
+//         * Reported by pointer motion.
+//         *
+//         * @param detector The detector reporting the event - use this to
+//         *                 retrieve extended info about event state.
+//         * @return Whether or not the detector should consider this event
+//         * as handled. If an event was not handled, the detector
+//         * will continue to accumulate movement until an event is
+//         * handled. This can be useful if an application, for example,
+//         * only wants to update scaling factors if the change is
+//         * greater than 0.01.
+//         */
+//        @Override
+//        public boolean onScale(ScaleGestureDetector detector) {
+//            return false;
+//        }
+//
+//        /**
+//         * Responds to the beginning of a scaling gesture. Reported by
+//         * new pointers going down.
+//         *
+//         * @param detector The detector reporting the event - use this to
+//         *                 retrieve extended info about event state.
+//         * @return Whether or not the detector should continue recognizing
+//         * this gesture. For example, if a gesture is beginning
+//         * with a focal point outside of a region where it makes
+//         * sense, onScaleBegin() may return false to ignore the
+//         * rest of the gesture.
+//         */
+//        @Override
+//        public boolean onScaleBegin(ScaleGestureDetector detector) {
+//            return true;
+//        }
+//
+//        /**
+//         * Responds to the end of a scale gesture. Reported by existing
+//         * pointers going up.
+//         * <p/>
+//         * Once a scale has ended, {@link ScaleGestureDetector#getFocusX()}
+//         * and {@link ScaleGestureDetector#getFocusY()} will return focal point
+//         * of the pointers remaining on the screen.
+//         *
+//         * @param detector The detector reporting the event - use this to
+//         *                 retrieve extended info about event state.
+//         */
+//        @Override
+//        public void onScaleEnd(ScaleGestureDetector detector) {
+//            if (mCameraSource != null) {
+//                mCameraSource.doZoom(detector.getScaleFactor());
+//            }
+//        }
+//    }
 }
