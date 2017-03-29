@@ -66,7 +66,7 @@
         </activity>
 
 
-        <activity android:name="com.google.android.gms.samples.vision.ocrreader.OcrCaptureActivity"
+        <activity android:name="com.motoshop.ocrreader.OcrCaptureActivity"
             android:label="Read Text">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
