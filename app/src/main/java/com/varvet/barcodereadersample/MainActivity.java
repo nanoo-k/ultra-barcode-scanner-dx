@@ -1,5 +1,6 @@
 package com.varvet.barcodereadersample;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -26,6 +27,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.motoshop.ocrreader.OcrCaptureActivity;
 import com.varvet.barcodereadersample.barcode.BarcodeCaptureActivity;
 
 import java.io.IOException;
@@ -84,6 +86,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), BarcodeCaptureActivity.class);
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+            }
+        });
+
+        Button scanOcrButton = (Button) findViewById(R.id.scan_ocr_button);
+        scanOcrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), OcrCaptureActivity.class);
+                startActivity(intent);
+//                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
             }
         });
 

@@ -52,15 +52,24 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
     <Button
-        android:id="@+id/manual_entry_button"
+        android:id="@+id/scan_ocr_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/manual_entry_button"
+        android:text="@string/scan_ocr_button"
         android:layout_below="@id/scan_barcode_button"
         android:background="@color/colorPrimary"
         android:textColor="@color/colorWhite"
         android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
+    <Button
+        android:id="@+id/manual_entry_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/manual_entry_button"
+        android:layout_below="@id/scan_ocr_button"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
 
     <FrameLayout

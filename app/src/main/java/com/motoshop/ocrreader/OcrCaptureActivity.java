@@ -41,9 +41,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSource;
-import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSourcePreview;
-import com.google.android.gms.samples.vision.ocrreader.ui.camera.GraphicOverlay;
+import com.motoshop.ocrreader.camera.CameraSource;
+import com.motoshop.ocrreader.camera.CameraSourcePreview;
+import com.motoshop.ocrreader.camera.GraphicOverlay;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.varvet.barcodereadersample.R;
