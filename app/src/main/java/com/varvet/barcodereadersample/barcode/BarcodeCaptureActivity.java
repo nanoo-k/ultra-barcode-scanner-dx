@@ -31,7 +31,6 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -63,7 +62,6 @@ import java.io.IOException;
 
 import mshttp.LoginActivity;
 import mshttp.utilities.PreferenceData;
-import vins.ManualEntryActivity;
 
 public final class BarcodeCaptureActivity extends AppCompatActivity
         implements BarcodeTracker.BarcodeGraphicTrackerCallback {

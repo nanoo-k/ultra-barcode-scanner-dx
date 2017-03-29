@@ -1,28 +1,18 @@
 package com.varvet.barcodereadersample;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.varvet.barcodereadersample.barcode.BarcodeCaptureActivity;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import mshttp.utilities.CarDetails;
-import mshttp.utilities.Vin;
-import vins.ManualEntryActivity;
-
-import static android.R.attr.resource;
+import com.motoshop.vins.CarDetails;
+import com.motoshop.vins.Vin;
 
 /**
  * Created by mvalencia on 3/17/17.

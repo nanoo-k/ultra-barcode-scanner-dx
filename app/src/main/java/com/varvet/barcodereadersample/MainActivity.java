@@ -14,10 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,15 +31,14 @@ import com.varvet.barcodereadersample.barcode.BarcodeCaptureActivity;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import mshttp.LoginActivity;
 import mshttp.utilities.NetworkUtils;
 import mshttp.utilities.PreferenceData;
-import mshttp.utilities.Vin;
-import vins.ManualEntryActivity;
-import vins.VinsAdapter;
+import com.motoshop.vins.Vin;
+import com.motoshop.vins.ManualEntryActivity;
+import com.motoshop.vins.VinsAdapter;
 
 
 public class MainActivity extends AppCompatActivity {

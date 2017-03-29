@@ -1,4 +1,4 @@
-package vins;
+package com.motoshop.vins;
 
 import android.content.Context;
 import android.content.Intent;

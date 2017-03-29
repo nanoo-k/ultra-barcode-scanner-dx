@@ -1,4 +1,4 @@
-package vins;
+package com.motoshop.vins;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.varvet.barcodereadersample.MainActivity;
 import com.varvet.barcodereadersample.MyApplication;
 import com.varvet.barcodereadersample.R;
 
@@ -22,9 +21,6 @@ import java.util.List;
 
 import mshttp.utilities.NetworkUtils;
 import mshttp.utilities.PreferenceData;
-import mshttp.utilities.Vin;
-
-import static android.R.attr.category;
 
 /**
  * Created by mvalencia on 3/20/17.

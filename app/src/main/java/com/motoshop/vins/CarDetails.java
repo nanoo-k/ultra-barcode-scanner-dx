@@ -1,4 +1,4 @@
-package mshttp.utilities;
+package com.motoshop.vins;
 
 /**
  * Created by mvalencia on 3/6/17.
