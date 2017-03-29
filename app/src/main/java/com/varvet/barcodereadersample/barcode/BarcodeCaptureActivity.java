@@ -120,9 +120,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity
 
 
         /* Set up the appbar as a toolbar (docs recommend this for best compatibility */
-//        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-//        setSupportActionBar(myToolbar);
-
         // my_child_toolbar is defined in the layout file
         Toolbar myChildToolbar =
                 (Toolbar) findViewById(R.id.my_child_toolbar);

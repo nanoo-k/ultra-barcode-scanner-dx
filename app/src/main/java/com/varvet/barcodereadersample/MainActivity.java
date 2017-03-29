@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), OcrCaptureActivity.class);
-                startActivity(intent);
-//                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
+//                startActivity(intent);
+                startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
             }
         });
 

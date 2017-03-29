@@ -31,9 +31,13 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -50,6 +54,9 @@ import com.varvet.barcodereadersample.R;
 
 import java.io.IOException;
 import java.util.Locale;
+
+import mshttp.LoginActivity;
+import mshttp.utilities.PreferenceData;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -126,6 +133,58 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                     }
                 };
         tts = new TextToSpeech(this.getApplicationContext(), listener);
+
+
+
+        /* Set up the appbar as a toolbar (docs recommend this for best compatibility */
+        // my_child_toolbar is defined in the layout file
+        Toolbar myChildToolbar =
+                (Toolbar) findViewById(R.id.my_child_toolbar);
+        setSupportActionBar(myChildToolbar);
+
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
+    }
+
+
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // User wants to logout, log them out.
+                logout();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    protected void logout () {
+        PreferenceData.clearLoggedInUser(getApplicationContext());
+        PreferenceData.clearJwt(getApplicationContext());
+
+        navigateToLogin();
+    }
+
+    /* Navigate to login page */
+    protected void navigateToLogin () {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
     }
 
     /**
